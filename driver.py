@@ -5,7 +5,7 @@ Created on Fri Jan 29 23:50:57 2021
 @author: Aditya Mishra
 """
 
-
+# Necessary Libraries
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.datasets import load_diabetes
@@ -14,11 +14,13 @@ from sklearn.linear_model import LinearRegression as Sk_linear_reg
 from sklearn.metrics import mean_squared_error
 from my_linear_model import LinearRegression
 
+# Dataset
 data = load_diabetes()
 df = pd.DataFrame(data.data, columns=data.feature_names)
 df['target'] = data.target
 print('Describe Dataset\n', df.describe())
 
+# Model
 epoch = 10_000
 my_clf = LinearRegression(max_iter=epoch, optimizer='bgd')
 reg_clf = Sk_linear_reg()
@@ -30,6 +32,7 @@ reg_clf.fit(x_train, y_train)
 my_pred = my_clf.predict(x_test)
 reg_pred = reg_clf.predict(x_test)
 
+# Model Test Result
 print(f"My Model's MSE: {my_clf.mse(y_test, my_pred):.3f}")
 print(f"Sklearn Model's MSE: {mean_squared_error(y_test, reg_pred):.3f}")
 

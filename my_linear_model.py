@@ -13,7 +13,6 @@ class LinearRegression:
 
     def __init__(self, lr=0.01, max_iter=100_000, optimizer='bgd', batch_size=128, copy_x=True):
         """
-
         :param lr: float, Learning Rate
         :param max_iter: int, Max number of iteration or epochs
         :param optimizer: str, 'bgd' <- Batch Gradient Descent
@@ -35,7 +34,7 @@ class LinearRegression:
     @staticmethod
     def mse(y_actual, y_predicted):
         """
-
+        This method calculates the Mean Squared Error.
         :param y_actual: Array, True response
         :param y_predicted: Array, Predicted response
         :return: float, Amount of error
@@ -45,7 +44,7 @@ class LinearRegression:
     @staticmethod
     def rmse(y_actual, y_predicted):
         """
-
+        This method calculates the Root Mean Squared Error.
         :param y_actual: Array, True response
         :param y_predicted: Array, Predicted response
         :return: float, Square root of amount of error
@@ -59,16 +58,15 @@ class LinearRegression:
         :param x: Array [n_instances, n_features], Predictors
         :param y: Array [n_instances,], Response
         """
-        # 1. Predict y for the dataset
+        # 1. Predict y for each instance dataset. y_hat dimension [n_instances,]
         y_hat = np.dot(x, self.coef_) + self.intercept_
         
-        # 2. Calculate Loss
+        # 2. Calculate Loss for current epoch or iteration
         loss = self.mse(y, y_hat)
         self.error_.append(loss)
         
-        # 3. Calculate the amount to change in 
-        # coefficients and intercept needed to 
-        # reduce the loss.
+        # 3. Calculate the amount of change needed in
+        # coefficients and intercept to reduce the loss.
         j_coef = (-2 / x.shape[0]) * np.dot(x.T, (y - y_hat))
         j_intercept = (-2 / x.shape[0]) * np.sum(y - y_hat)
 
@@ -85,29 +83,40 @@ class LinearRegression:
         """
         start = 0
         end = self.batch_size
-        j_coef, j_intercept, loss = 0, 0, 0
+        j_coef, j_intercept, loss = 0.0, 0.0, 0.0
+
+        # This loop runs for ceiling(n_instances by batch_size) times
         while end < x.shape[0]:
             y_hat = np.dot(x[start:end, :], self.coef_) + self.intercept_
             loss += self.mse(y[start:end], y_hat)
+
+            # Accumulate the amount of change needed to get closer to local minima.
             j_coef += (-2 / self.batch_size) * np.dot(x[start:end, :].T, (y[start:end] - y_hat))
             j_intercept += (-2 / self.batch_size) * np.sum(y[start:end] - y_hat)
             start = end
             end += self.batch_size
+
         self.error_.append(loss)    
+
+        # Update coefficients and intercept with the amount of change needed
+        # to get closer to local minima
         self.coef_ -= self.lr * j_coef
         self.intercept_ -= self.lr * j_intercept
     
     def fit(self, x, y):
         """
-        This method fits the Regression line on dataset by calling either bgd or sgd for max_iter times.
+        This method fits the Regression line on dataset by calling either
+        bgd or sgd for max_iter times.
         :param x: Array [n_instances, n_features], Predictors
         :param y: Array [n_instances,], Response
         """
         x = np.asarray(x)
         y = np.asarray(y)
         x_copy = x.copy() if self.copy_x is True else x
-        # Run for 'e' max_iter and calculate optimal coefficients and intercept values
         self.coef_ = np.zeros(x_copy.shape[1])
+
+        # Run for max_iter times and calculate optimal coefficients
+        # and intercept value
         for e in range(self.max_iter):
             if self.optimizer == 'bgd':
                 self.bgd(x_copy, y)
