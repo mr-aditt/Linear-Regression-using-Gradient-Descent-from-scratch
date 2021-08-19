@@ -102,7 +102,6 @@ class LinearRegression:
         This method fits the Regression line on dataset by calling either bgd or sgd for max_iter times.
         :param x: Array [n_instances, n_features], Predictors
         :param y: Array [n_instances,], Response
-        :return: Tuple, (coefficients, y-intercept, errors)
         """
         x = np.asarray(x)
         y = np.asarray(y)
@@ -114,8 +113,6 @@ class LinearRegression:
                 self.bgd(x_copy, y)
             elif self.optimizer == 'sgd':
                 self.sgd(x_copy, y)
-            
-        return self.coef_, self.intercept_, self.error_
     
     def predict(self, x):
         """

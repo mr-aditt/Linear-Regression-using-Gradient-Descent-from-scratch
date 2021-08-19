@@ -24,7 +24,7 @@ my_clf = LinearRegression(max_iter=epoch, optimizer='bgd')
 reg_clf = Sk_linear_reg()
 
 x_train, x_test, y_train, y_test = train_test_split(df.drop(['target'], axis=1), df['target'], test_size=0.3)
-_, _, errors = my_clf.fit(x_train, y_train)
+my_clf.fit(x_train, y_train)
 reg_clf.fit(x_train, y_train)
 
 my_pred = my_clf.predict(x_test)
@@ -35,7 +35,7 @@ print(f"Sklearn Model's MSE: {mean_squared_error(y_test, reg_pred):.3f}")
 
 # Error Plot
 plt.title("Error in K-epochs")
-plt.plot(range(epoch), errors, 'r-')
+plt.plot(range(epoch), my_clf.error_, 'r-')
 plt.xlabel('Epochs')
 plt.ylabel('Error')
 plt.show()
